@@ -1,0 +1,7 @@
+{
+    "dataworkspace.excludedProjects": [
+        "sql_scripts/paid_marketing_sample/paid_marketing_sample.sqlproj",
+        "paid_marketing_sample/paid_marketing_sample.sqlproj",
+        "sql_scripts/digital_marketing/digital_marketing/digital_marketing.sqlproj"
+    ]
+}

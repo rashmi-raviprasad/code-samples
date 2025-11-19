@@ -1,0 +1,117 @@
+# pipeline_config.yml
+# Demonstrates modular table loads, dependencies, and final aggregation
+
+pipeline:
+  name: paid_marketing_pipeline
+  description: >
+    Example of ETL pipeline for digital marketing analytics.
+    Demonstrates staging, production, and final aggregation of all tables.
+
+  schedule: daily 
+
+  tasks:
+
+    # ===============================
+    # Campaigns Table
+    # ===============================
+    - id: campaigns_staging
+      description: >
+        Staging layer for campaigns table.
+        Includes conceptual raw ingestion and validation.
+      script: campaigns_staging.sql
+      depends_on: []
+
+    - id: campaigns_prod
+      description: >
+        Production layer for campaigns table.
+        Performs incremental/deduplicated insert.
+      script: campaigns_prod.sql
+      depends_on:
+        - campaigns_staging
+
+    # ===============================
+    # Keywords Table
+    # ===============================
+    - id: keywords_staging
+      description: >
+        Staging layer for campaigns table.
+        Includes conceptual raw ingestion and validation.
+      script: keywords_staging.sql
+      depends_on: []
+
+    - id: keywords_prod
+      description: >
+        Production layer for campaigns table.
+        Performs incremental/deduplicated insert.
+      script: keywords_prod.sql
+      depends_on:
+        - keywords_staging
+
+    # ===============================
+    # Keyword Stats Table
+    # ===============================
+    - id: keyword_stats_staging
+      description: >
+        Staging layer for keyword_stats.
+        Includes raw ingestion, data validation, and cleansing.
+      script: keyword_stats_staging.sql
+      depends_on: []
+
+    - id: keyword_stats_prod
+      description: >
+        Production layer for keyword_stats.
+        Incremental insert, deduplication, ready for reporting.
+      script: keyword_stats_prod.sql
+      depends_on:
+        - keyword_stats_staging
+
+    # ===============================
+    # Revenue Stats Table
+    # ===============================
+    - id: revenue_stats_staging
+      description: >
+        Staging layer for revenue_stats.
+        Includes raw ingestion, validation, and basic cleansing.
+      script: revenue_stats_staging.sql
+      depends_on: []
+
+    - id: revenue_stats_prod
+      description: >
+        Production layer for revenue_stats.
+        Incremental/deduplicated load, ready for downstream analytics.
+      script: revenue_stats_prod.sql
+      depends_on:
+        - revenue_stats_staging
+
+    # ===============================
+    # Traffic Stats Table
+    # ===============================
+    - id: traffic_stats_staging
+      description: >
+        Staging layer for traffic_stats.
+        Includes raw ingestion, validation, and basic cleansing.
+      script: traffic_stats_staging.sql
+      depends_on: []
+
+    - id: traffic_stats_prod
+      description: >
+        Production layer for traffic_stats.
+        Incremental/deduplicated load, ready for downstream analytics.
+      script: traffic_stats_prod.sql
+      depends_on:
+        - traffic_stats_staging
+
+    # ===============================
+    # Final Aggregation Table
+    # ===============================
+    - id: paid_marketing_stats
+      description: >
+        Aggregation layer combining campaigns, keyword_stats, and traffic_stats.
+        Produces the consolidated reporting table ready for analytics.
+      script: paid_marketing_stats.sql
+      depends_on:
+        - campaigns_prod
+        - keywords_prod
+        - keyword_stats_prod
+        - revenue_stats_prod
+        - traffic_stats_prod
